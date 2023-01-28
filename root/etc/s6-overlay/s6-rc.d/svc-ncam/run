@@ -3,3 +3,4 @@
 exec \
     s6-notifyoncheck -d -n 300 -w 1000 -c "nc -z localhost 8181" \
         s6-setuidgid abc /usr/bin/ncam -c /config/ncam
+
