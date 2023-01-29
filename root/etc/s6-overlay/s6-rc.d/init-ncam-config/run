@@ -1,0 +1,13 @@
+#!/usr/bin/with-contenv bash
+
+# make folders
+mkdir -p \
+	/config/ncam
+
+# copy config
+[[ ! -e /config/ncam/ncam.conf ]] && \
+	cp /defaults/ncam.conf /config/ncam/ncam.conf
+
+# permissions
+chown -R abc:abc \
+	/config
