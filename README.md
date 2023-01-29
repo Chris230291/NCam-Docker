@@ -184,7 +184,7 @@ Below are the instructions for updating containers:
 If you want to make local modifications to these images for development purposes or just to customize the logic:
 
 ```bash
-git clone https://github.com/chris230291/docker-ncam.git
+git clone https://github.com/Chris230291/NCam-Docker.git
 cd docker-ncam
 docker buildx build \
   --platform linux/amd64,linux/arm/v7,linux/arm64 \
