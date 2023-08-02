@@ -1,4 +1,9 @@
-FROM --platform=$TARGETPLATFORM ghcr.io/linuxserver/baseimage-alpine:3.16
+FROM ghcr.io/linuxserver/baseimage-alpine:3.16 as amd64-platform
+FROM ghcr.io/linuxserver/baseimage-alpine:arm64v8-3.16 as arm64-platform
+FROM ghcr.io/linuxserver/baseimage-alpine:arm32v7-3.16-version-4a1e3db5 as armv7-platform
+
+FROM ${TARGETARCH}${TARGETVARIANT}-platform as platform
+############## build platform ##############
 
 # set version label
 ARG BUILD_DATE
@@ -88,6 +93,13 @@ RUN \
 
 # copy local files
 COPY root/ /
+
+RUN \
+  echo "**** permissions to run ****" && \
+  chmod 755 \
+    /etc/s6-overlay/s6-rc.d/svc-pcsd/run \
+    /etc/s6-overlay/s6-rc.d/svc-ncam/run \
+    /etc/s6-overlay/s6-rc.d/init-ncam-config/run
 
 # Ports and volumes
 EXPOSE 8181
