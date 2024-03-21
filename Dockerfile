@@ -24,7 +24,10 @@ RUN \
     curl-dev \
     pcsc-lite-dev \
     git \
-    tar && \
+    tar \
+    libdvbcsa-dev
+
+RUN \
   echo "**** install runtime packages ****" && \
   apk add --no-cache \
     ccid \
@@ -33,7 +36,10 @@ RUN \
     libssl1.1 \
     libusb \
     pcsc-lite \
-    pcsc-lite-libs && \
+    pcsc-lite-libs \
+    libdvbcsa
+
+RUN \
   echo "**** compile ncam ****" && \
   if [ -z ${NCAM_COMMIT+x} ]; then \
     NCAM_COMMIT=$(curl -sX GET https://api.github.com/repos/fairbird/NCam/commits/master \
@@ -64,27 +70,35 @@ RUN \
     NO_PLUS_TARGET=1 \
     NCAM_BIN=/usr/bin/ncam \
     USE_LIBCURL=1 \
-    pcsc-libusb && \
+    pcsc-libusb
+
+RUN \
   echo "**** fix broken permissions from pcscd install ****" && \
   chown root:root \
     /usr/sbin/pcscd && \
   chmod 755 \
-    /usr/sbin/pcscd && \
+    /usr/sbin/pcscd
+
+RUN \
   echo "**** install PCSC drivers ****" && \
   mkdir -p \
     /tmp/omnikey && \
   curl -o \
     /tmp/omnikey.tar.gz -L \
-    "https://www3.hidglobal.com/sites/default/files/drivers/ifdokccid_linux_x86_64-v4.2.8.tar.gz" && \
+    "https://ci-tests.linuxserver.io/artifacts/ifdokccid_linux_x86_64-v4.2.8.tar.gz" && \
   tar xzf \
     /tmp/omnikey.tar.gz -C \
     /tmp/omnikey --strip-components=2 && \
   cd /tmp/omnikey && \
-  ./install && \
+  ./install
+
+RUN \
   echo "**** fix group for card readers and add abc to dialout group ****" && \
   groupmod -g 24 cron && \
   groupmod -g 16 dialout && \
-  usermod -a -G 16 abc && \
+  usermod -a -G 16 abc
+
+RUN \
   echo "**** cleanup ****" && \
   apk del --purge \
     build-dependencies && \
