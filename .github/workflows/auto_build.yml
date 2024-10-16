@@ -1,4 +1,4 @@
-name: Build and Push Docker Images
+name: Auto Build and Push Docker Images
 
 on:
   workflow_dispatch:  # Allows you to manually trigger the action from the Actions tab
