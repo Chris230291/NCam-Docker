@@ -2,15 +2,29 @@ name: Build and Push Docker Images
 
 on:
   workflow_dispatch:  # Allows you to manually trigger the action from the Actions tab
-  push:  # Runs whenever a commit is pushed to the repository
+  push:  # Automatically triggers on every commit to the main branch
     branches:
-      - main
+      - main  # Replace with the branch you want to monitor, e.g., 'main' or 'master'
 
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
+
+      # Fetch the latest commit from GitHub
+      - name: Get Latest Commit
+        id: latest_commit
+        run: |
+          LATEST_COMMIT=$(curl -s --retry 5 --retry-delay 5 --retry-max-time 30 https://api.github.com/repos/fairbird/NCam/commits | jq -r '.[0].sha' || true)
+
+          # Check if LATEST_COMMIT is empty
+          if [ -z "$LATEST_COMMIT" ]; then
+            echo "Failed to fetch latest commit. Exiting gracefully."
+            exit 0
+          fi
+
+          echo "latest_commit=$LATEST_COMMIT" >> $GITHUB_ENV
 
       # Set up QEMU for emulation
       - name: Set up QEMU
@@ -35,5 +49,5 @@ jobs:
           platforms: linux/amd64,linux/arm64
           push: true
           tags: |
-            chris230291/ncam:$(git rev-parse --short HEAD)
+            chris230291/ncam:${{ env.latest_commit }}
             chris230291/ncam:latest
