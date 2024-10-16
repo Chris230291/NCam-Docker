@@ -42,11 +42,13 @@ RUN \
 
 RUN \
   echo "**** replace oscam with ncam ****" && \
-  mv /defaults/oscam.conf /defaults/ncam.conf && \
+  rm /defaults/oscam.conf && \
   sed -i '/^#/d' /defaults/ncam.conf && \
   find /etc/s6-overlay/s6-rc.d -type f -exec sed -i 's/oscam/ncam/g' {} + && \
   find /etc/s6-overlay/s6-rc.d -depth -name "*oscam*" -exec sh -c 'mv "$1" "$(dirname "$1")/$(basename "$1" | sed "s/oscam/ncam/")"' _ {} \; && \
   rm /usr/bin/oscam
+
+COPY /ncam.conf /defaults/ncam.conf
 
 RUN \
   echo "**** cleanup ****" && \
